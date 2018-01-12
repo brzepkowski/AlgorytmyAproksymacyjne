@@ -2,10 +2,10 @@
 
 module LargestProcessingTime
 
-export LargestProcessingTime
-export ListSchedulingAlgorithm
+export largestProcessingTime
+export listSchedulingAlgorithm
 
-function ListSchedulingAlgorithm(times, m)
+function listSchedulingAlgorithm(times, m)
   machines = zeros(Int64, m)
   assignment = Array{Any}(m)
   for i in 1:m
@@ -21,20 +21,19 @@ end
 
 
 # times - czasy wykonania zadań, m - liczba maszyn
-function LargestProcessingTime(times, m)
+function largestProcessingTime(times, m)
     machines = zeros(m)
     machinesJobs = Array{Any}(m)
     for i in 1:m
         machinesJobs[i] = []
     end
     sortedTimes = sort(times, rev=true)
-    FindMinIndex(sortedTimes)
-    for p in sortedTimes
+    for p in 1:length(sortedTimes)
         index = FindMinIndex(machines)
         push!(machinesJobs[index], p)
-        machines[index] += p
+        machines[index] += sortedTimes[p]
     end
-    return machinesJobs
+    return machinesJobs, maximum(machines)
 end # LargestProcessingTime
 
 # Znajdź indeks komórki przechowującej najmniejszą wartość
