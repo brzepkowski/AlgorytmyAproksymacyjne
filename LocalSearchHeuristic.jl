@@ -1,6 +1,6 @@
 # Copyright (c) 2017 Bartosz Rzepkowski, all rights reserved.
 
-p = [2,3,3,5,3,4,5] # czasy wykonania zadań
+p = [2,3,3,5,3,4,5,3,4,5,6,7,7,5,3,2,1,3,4] # czasy wykonania zadań
 
 function Makespan(scheme)
     makespan = 0
@@ -82,9 +82,79 @@ function ReassignmentNeighbourhood(s, m)
     end
 end # ReassignmentNeighbourhood
 
+function InterchangeNeighbourhood(schedule, m)
+    i₁ = 1; i₂ = 1
+    exchange = true
+    while true
+        println(schedule)
+        M = []
+        for (i, s) in enumerate(schedule)
+            push!(M, (sum(s), i))
+        end
+
+        M₁ = sort(M, rev=true); M₂ = sort(M, rev=false)
+        if exchange
+            i₁ = 1; i₂ = 1
+            m₁ = M₁[i₁][2]; m₂ = M₂[i₂][2]
+        end
+        J₁ = schedule[m₁]; J₂ = schedule[m₂]
+        k = 1
+        j = 1
+        exchange = false
+        while !exchange && k < (length(J₁) + 1)
+            j₁ = J₁[k]
+            j₂ = J₂[j]
+            g = deepcopy(schedule)
+            g = SwapJobs(g, m₁, m₂, j₁, j₂)
+            # println("s: ", schedule)
+            # println("g: ", g)
+            if Makespan(g) < Makespan(schedule)
+                exchange = true
+            else
+                j += 1
+            end
+            if j == length(J₂)
+                k += 1
+                j = 1
+            end
+        end
+        if !exchange
+            # println("M₁: ", M₁)
+            # println("M₂: ", M₂)
+            # println("Przed m₁: ", m₁)
+            # println("Przed m₂: ", m₂)
+            i₂ += 1
+            m₂ = M₂[i₂][2]
+            if m₁ == m₂
+                i₁ += 1
+                m₁ = M₁[i₁][2]
+                i₂ = 1
+                m₂ = M₂[1][2]
+            end
+            if m₁ == M₂[1][2]
+                break
+            end
+        else
+            schedule = g
+        end
+    end
+    return schedule
+end # InterchangeNeighbourhood
+
+function SwapJobs(schedule, m₁, m₂, j₁, j₂)
+    deleteat!(schedule[m₁], findin(schedule[m₁], [j₁]))
+    deleteat!(schedule[m₂], findin(schedule[m₂], [j₂]))
+    push!(schedule[m₁], j₂)
+    push!(schedule[m₂], j₁)
+    return schedule
+end # SwapJobs
+
 function LocalSearchHeuristic(times, m)
     s = FindFeasibleSolution(times, m)
-    ReassignmentNeighbourhood(s, m)
+    sˈ = ReassignmentNeighbourhood(s, m)
+    sˈˈ = InterchangeNeighbourhood(sˈ, m)
+    return sˈˈ
 end # LocalSearchHeuristic
 
 println(LocalSearchHeuristic(p, 3))
+
