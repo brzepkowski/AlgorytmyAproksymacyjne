@@ -4,6 +4,9 @@ module TestCases
 
 using IntegerProgramming
 
+export easyTestCase
+export uniformTestCase
+
 struct TestCase
   time :: Vector{Int}
   machines :: Int

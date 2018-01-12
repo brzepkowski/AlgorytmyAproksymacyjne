@@ -1,6 +1,24 @@
 # Copyright (c) 2017 Bartosz Rzepkowski, all rights reserved.
 
-p = [2,2,2,3,3,5,2,3,4,5,5,6,5,4,3,3,5,4,5,4,5,3] # czasy wykonania zadań
+module LargestProcessingTime
+
+export LargestProcessingTime
+export ListSchedulingAlgorithm
+
+function ListSchedulingAlgorithm(times, m)
+  machines = zeros(Int64, m)
+  assignment = Array{Any}(m)
+  for i in 1:m
+      assignment[i] = []
+  end
+  for p in 1:length(times)
+    index = indmin(machines)
+    push!(assignment[index], p)
+    machines[index] += times[p]
+  end
+  return assignment, maximum(machines)
+end
+
 
 # times - czasy wykonania zadań, m - liczba maszyn
 function LargestProcessingTime(times, m)
@@ -32,4 +50,4 @@ function FindMinIndex(arr)
     return index
 end # FindMinIndex
 
-println(LargestProcessingTime(p, 10))
+end
