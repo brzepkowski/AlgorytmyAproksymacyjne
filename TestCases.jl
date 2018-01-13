@@ -20,9 +20,15 @@ function easyTestCase(jobs, machines, typicalJobTime)
   return TestCase(time, machines, makespan)
 end
 
+function parallelTestCase(jobs, maxJobTime)
+  time = rand(1:maxJobTime, jobs)
+  makespan = maximum(time)
+  return TestCase(time, jobs, makespan)
+end
+
 function uniformTestCase(jobs, machines, maxJobTime)
   time = rand(1:maxJobTime, jobs)
-  _, makespan = IntegerProgramming(time, machines)
+  _, makespan = integerProgramming(time, machines)
   return TestCase(time, machines, makespan)
 end
 
