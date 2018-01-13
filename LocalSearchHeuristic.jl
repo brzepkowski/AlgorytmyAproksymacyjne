@@ -81,6 +81,7 @@ function ReassignmentNeighbourhood(s, m)
                 push!(g[i], j)
             end
         end
+        s = g
     end
 end # ReassignmentNeighbourhood
 
@@ -89,7 +90,6 @@ function InterchangeNeighbourhood(schedule, m)
     exchange = true
     g = deepcopy(schedule)
     while true
-        #println(schedule)
         M = []
         for (i, s) in enumerate(schedule)
             push!(M, (sum(s), i))
@@ -109,8 +109,6 @@ function InterchangeNeighbourhood(schedule, m)
             j₂ = J₂[j]
             g = deepcopy(schedule)
             g = SwapJobs(g, m₁, m₂, j₁, j₂)
-            # println("s: ", schedule)
-            # println("g: ", g)
             if Makespan(g) < Makespan(schedule)
                 exchange = true
             else
@@ -122,10 +120,6 @@ function InterchangeNeighbourhood(schedule, m)
             end
         end
         if !exchange
-            # println("M₁: ", M₁)
-            # println("M₂: ", M₂)
-            # println("Przed m₁: ", m₁)
-            # println("Przed m₂: ", m₂)
             if m₁ == M₂[1][2]
                 break
             end

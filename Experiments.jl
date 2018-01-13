@@ -39,9 +39,9 @@ function testSet(machines, testCaseGenerator :: Function, farg)
     println("   & OPT & $((a1[2]/ms)) & $(a2[2]/ms) & $(a3[2]/ms) & $(a4[2]/ms)\\\\ \\hline")
   end
 end
-
+ testSet(10, uniformTestCaseOptimum, 10)
 # testSet(3, easyTestCase, 10)
-testSet(3, uniformTestCaseOptimum, 10)
+# testSet(3, uniformTestCaseOptimum, 10)
 # testSet(3, uniformTestCaseLowerBound, 10000)
 #
 # p = [3, 2, 6, 4, 5, 7, 9, 13, 4, 12, 10, 8, 22, 11, 8, 26, 14, 6, 17, 27, 11, 17, 26, 16, 7, 23, 15, 18, 15, 13]
