@@ -4,7 +4,7 @@ module LocalSearchHeuristic
 export localSearchHeuristic
 
 function Makespan(scheme)
-  makespan = maximum(sum(scheme[i]) for i=1:length(scheme) if !isempty(scheme))
+  makespan = maximum(sum(scheme[i]) for i=1:length(scheme) if !isempty(scheme[i]))
 #    makespan = 0
 #    for s in scheme
 #        makespanˈ = sum(s)
@@ -87,6 +87,7 @@ end # ReassignmentNeighbourhood
 function InterchangeNeighbourhood(schedule, m)
     i₁ = 1; i₂ = 1
     exchange = true
+    g = deepcopy(schedule)
     while true
         #println(schedule)
         M = []
