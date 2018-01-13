@@ -5,6 +5,7 @@ using TestCases
 using LargestProcessingTime
 using LocalSearchHeuristic
 
+
 function testSet(machines, testCaseGenerator :: Function, farg)
   for i ∈ 10:10:100
     testCase = testCaseGenerator(i, machines, farg)
@@ -22,8 +23,20 @@ function testSet(machines, testCaseGenerator :: Function, farg)
 end
 
 testSet(3, easyTestCase, 10)
-testSet(3, uniformTestCaseExact, 10)
+testSet(3, uniformTestCaseOptimum, 10)
+testSet(3, uniformTestCaseLowerBound, 10000)
 
+
+
+testSet(3, myTestCase, 0)
+function myTestCase(jobs, machines, f)
+  time = randexp(jobs)
+  timeInt = map(x -> convert(Int64, round(1000*x)), time)
+  return TestCases.TestCase(timeInt, machines, 0)
+end
+
+
+using IntegerProgramming
 function zkAlgorithm(times, m, k)
   machines = zeros(Int64, m)
   sorted = sort(times, rev=true)

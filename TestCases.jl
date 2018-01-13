@@ -6,7 +6,7 @@ using IntegerProgramming
 
 export easyTestCase
 export uniformTestCaseLowerBound
-export uniformTestCaseExact
+export uniformTestCaseOptimum
 
 struct TestCase
   time :: Vector{Int}
@@ -29,7 +29,7 @@ end
 
 function uniformTestCaseLowerBound(jobs, machines, maxJobTime)
   time = rand(1:maxJobTime, jobs)
-  makespan = linearProgrammingLowerBound(time, machines)
+  makespan = convert(Int64, round(linearProgrammingLowerBound(time, machines)))
   return TestCase(time, machines, makespan)
 end
 
