@@ -7,6 +7,7 @@ using IntegerProgramming
 export easyTestCase
 export uniformTestCaseLowerBound
 export uniformTestCaseOptimum
+export expotentialTestCase
 
 struct TestCase
   time :: Vector{Int}
@@ -38,5 +39,13 @@ function uniformTestCaseOptimum(jobs, machines, maxJobTime)
   _, makespan = integerProgramming(time, machines)
   return TestCase(time, machines, makespan)
 end
+
+function expotentialTestCase(jobs, machines, f)
+  time = randexp(jobs)
+  timeInt = map(x -> convert(Int64, round(1000*x)), time)
+  _, makespan = integerProgramming(timeInt, machines)
+  return TestCases.TestCase(timeInt, machines, makespan)
+end
+
 
 end
