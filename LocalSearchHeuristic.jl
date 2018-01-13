@@ -5,14 +5,15 @@ module LocalSearchHeuristic
 export localSearchHeuristic
 
 function Makespan(scheme)
-    makespan = 0
-    for s in scheme
-        makespanˈ = sum(s)
-        if makespanˈ > makespan
-            makespan = makespanˈ
-        end
-    end
-    return makespan
+  makespan = maximum(length(scheme[i]) != 0 ? sum(scheme[i]) : 0 for i=1:length(scheme))
+#    makespan = 0
+#    for s in scheme
+#        makespanˈ = sum(s)
+#        if makespanˈ > makespan
+#            makespan = makespanˈ
+#        end
+#    end
+  return makespan
 end # Makespan
 
 # Znajdź indeks komórki przechowującej najmniejszą wartość
@@ -88,7 +89,7 @@ function InterchangeNeighbourhood(schedule, m)
     i₁ = 1; i₂ = 1
     exchange = true
     while true
-        println(schedule)
+        #println(schedule)
         M = []
         for (i, s) in enumerate(schedule)
             push!(M, (sum(s), i))

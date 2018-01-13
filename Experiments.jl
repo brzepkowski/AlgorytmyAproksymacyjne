@@ -17,7 +17,7 @@ function testSet(machines, testCaseGenerator :: Function, farg)
     # a5 = tabu search
     # a6 = symulowane wyżarzanie
     println("$i & $(testCase.makespan) & $(a1[2]) & $(a2[2]) & $(a3[2]) & $(a4[2]) \\\\ \\hline")
-    println("   & OPT & $((a1[2]/ms)) & $(a2[2]/ms) & $(a3[2]/ms) & $(a4[2/ms])\\\\ \\hline")
+    println("   & OPT & $((a1[2]/ms)) & $(a2[2]/ms) & $(a3[2]/ms) & $(a4[2]/ms)\\\\ \\hline")
   end
 end
 
@@ -43,7 +43,6 @@ function zkAlgorithm(times, m, k)
   end
   return assignment, maximum(machines)
 end
-
 
 
 using JuMP
