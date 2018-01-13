@@ -5,7 +5,8 @@ module TestCases
 using IntegerProgramming
 
 export easyTestCase
-export uniformTestCase
+export uniformTestCaseLowerBound
+export uniformTestCaseExact
 
 struct TestCase
   time :: Vector{Int}
