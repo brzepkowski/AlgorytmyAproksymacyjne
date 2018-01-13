@@ -104,7 +104,7 @@ function InterchangeNeighbourhood(schedule, m)
         k = 1
         j = 1
         exchange = false
-        while !exchange && k < (length(J₁) + 1)
+        while !exchange && k <= length(J₁)
             j₁ = J₁[k]
             j₂ = J₂[j]
             g = deepcopy(schedule)
@@ -116,7 +116,7 @@ function InterchangeNeighbourhood(schedule, m)
             else
                 j += 1
             end
-            if j == length(J₂)
+            if j >= length(J₂)
                 k += 1
                 j = 1
             end
@@ -126,16 +126,17 @@ function InterchangeNeighbourhood(schedule, m)
             # println("M₂: ", M₂)
             # println("Przed m₁: ", m₁)
             # println("Przed m₂: ", m₂)
-            i₂ += 1
-            m₂ = M₂[i₂][2]
+            if m₁ == M₂[1][2]
+                break
+            end
             if m₁ == m₂
                 i₁ += 1
                 m₁ = M₁[i₁][2]
                 i₂ = 1
                 m₂ = M₂[1][2]
-            end
-            if m₁ == M₂[1][2]
-                break
+            else
+                i₂ += 1
+                m₂ = M₂[i₂][2]
             end
         else
             schedule = g

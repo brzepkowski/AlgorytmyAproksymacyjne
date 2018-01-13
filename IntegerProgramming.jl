@@ -1,4 +1,5 @@
 # Copyright (c) 2018 Mateusz K. Pyzik, all rights reserved.
+include("EnableLocalModules.jl")
 module IntegerProgramming
 
 using JuMP
