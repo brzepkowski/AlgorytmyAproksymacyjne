@@ -26,7 +26,13 @@ function parallelTestCase(jobs, maxJobTime)
   return TestCase(time, jobs, makespan)
 end
 
-function uniformTestCase(jobs, machines, maxJobTime)
+function uniformTestCaseLowerBound(jobs, machines, maxJobTime)
+  time = rand(1:maxJobTime, jobs)
+  makespan = linearProgrammingLowerBound(time, machines)
+  return TestCase(time, machines, makespan)
+end
+
+function uniformTestCaseOptimum(jobs, machines, maxJobTime)
   time = rand(1:maxJobTime, jobs)
   _, makespan = integerProgramming(time, machines)
   return TestCase(time, machines, makespan)

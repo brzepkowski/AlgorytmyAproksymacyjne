@@ -1,6 +1,6 @@
-# (c) Aleksander Spyra
+# Copyright (c) 2018 Aleksander Spyra, all rights reserved.
 # Experiments for P||C_max
-
+include("EnableLocalModules.jl")
 using TestCases
 using LargestProcessingTime
 using LocalSearchHeuristic
@@ -22,15 +22,13 @@ function testSet(machines, testCaseGenerator :: Function, farg)
 end
 
 testSet(3, easyTestCase, 10)
-testSet(3, uniformTestCase, 10)
-
-
+testSet(3, uniformTestCaseExact, 10)
 
 function zkAlgorithm(times, m, k)
   machines = zeros(Int64, m)
   sorted = sort(times, rev=true)
   kBests = sorted[1:k]
-  assignment, _ = integerProgramming2(kBests, m)
+  assignment, _ = integerProgramming(kBests, m)
   for i ∈ 1:m
     if length(assignment[i]) != 0
       machines[i] = sum(x -> kBests[x], assignment[i])
@@ -42,32 +40,4 @@ function zkAlgorithm(times, m, k)
     machines[index] += sorted[p]
   end
   return assignment, maximum(machines)
-end
-
-
-using JuMP
-using Cbc
-
-
-function integerProgramming2(time :: Vector{Int}, machines :: Int)
-  jobs = length(time)
-  m = Model(solver=CbcSolver())
-  @variables m begin
-    x[i=1:machines,j=1:jobs], Bin
-    ms >= 0
-  end
-  @objective(m, Min, ms)
-  @constraints m begin
-    [j=1:jobs], sum(x[i,j] for i=1:machines) == 1
-    [i=1:machines], ms >= sum(x[i,j]*time[j] for j=1:jobs)
-    # last constraint is redundant (can be deduced from others)
-    # but maybe it will somewhat guide the search?
-    machines * ms >= sum(time)
-  end
-  status = solve(m)
-  @assert status == :Optimal "Cannot happen, solution always exists!"
-  v = getvalue(x)
-  assignment = [Set(j for j=1:jobs if v[i,j] > 0.5) for i=1:machines]
-  makespan = maximum(sum(time[j] for j in assignment[i]) for i=1:machines if length(assignment[i]) != 0)
-  return assignment, makespan
 end

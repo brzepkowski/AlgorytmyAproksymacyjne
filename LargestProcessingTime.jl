@@ -1,5 +1,4 @@
 # Copyright (c) 2017 Bartosz Rzepkowski, all rights reserved.
-
 module LargestProcessingTime
 
 export largestProcessingTime
@@ -18,7 +17,6 @@ function listSchedulingAlgorithm(times, m)
   end
   return assignment, maximum(machines)
 end
-
 
 # times - czasy wykonania zadań, m - liczba maszyn
 function largestProcessingTime(times, m)

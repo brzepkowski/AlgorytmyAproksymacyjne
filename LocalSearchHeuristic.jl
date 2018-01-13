@@ -1,11 +1,10 @@
 # Copyright (c) 2017 Bartosz Rzepkowski, all rights reserved.
-
 module LocalSearchHeuristic
 
 export localSearchHeuristic
 
 function Makespan(scheme)
-  makespan = maximum(length(scheme[i]) != 0 ? sum(scheme[i]) : 0 for i=1:length(scheme))
+  makespan = maximum(sum(scheme[i]) for i=1:length(scheme) if !isempty(scheme))
 #    makespan = 0
 #    for s in scheme
 #        makespanˈ = sum(s)
