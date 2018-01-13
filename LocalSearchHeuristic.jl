@@ -1,6 +1,8 @@
 # Copyright (c) 2017 Bartosz Rzepkowski, all rights reserved.
 
-p = [2,3,3,5,3,4,5,3,4,5,6,7,7,5,3,2,1,3,4] # czasy wykonania zadań
+module LocalSearchHeuristic
+
+export localSearchHeuristic
 
 function Makespan(scheme)
     makespan = 0
@@ -149,12 +151,11 @@ function SwapJobs(schedule, m₁, m₂, j₁, j₂)
     return schedule
 end # SwapJobs
 
-function LocalSearchHeuristic(times, m)
+function localSearchHeuristic(times, m)
     s = FindFeasibleSolution(times, m)
     sˈ = ReassignmentNeighbourhood(s, m)
     sˈˈ = InterchangeNeighbourhood(sˈ, m)
-    return sˈˈ
+    return sˈˈ, maximum(sum(s''[i]) for i=1:length(s''))
 end # LocalSearchHeuristic
 
-println(LocalSearchHeuristic(p, 3))
-
+end
