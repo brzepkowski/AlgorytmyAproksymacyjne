@@ -77,7 +77,7 @@ function ReassignmentNeighbourhood(s, m)
                 return g
             else
                 (i, j) = pop!(EMax)
-                deleteat!(g[mMax], findin(g[mMax], [j]))
+                deleteat!(g[mMax], findin(g[mMax], [j])[1])
                 push!(g[i], j)
             end
         end
