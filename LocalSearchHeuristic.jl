@@ -77,7 +77,7 @@ function ReassignmentNeighbourhood(s, m)
                 return g
             else
                 (i, j) = pop!(EMax)
-                deleteat!(g[mMax], findin(g[mMax], [j])[1])
+                deleteat!(g[mMax], findin(g[mMax], [j]))
                 push!(g[i], j)
             end
         end
@@ -140,8 +140,8 @@ function InterchangeNeighbourhood(schedule, m)
 end # InterchangeNeighbourhood
 
 function SwapJobs(schedule, m₁, m₂, j₁, j₂)
-    deleteat!(schedule[m₁], findin(schedule[m₁], [j₁])[1])
-    deleteat!(schedule[m₂], findin(schedule[m₂], [j₂])[1])
+    deleteat!(schedule[m₁], findin(schedule[m₁], [j₁]))
+    deleteat!(schedule[m₂], findin(schedule[m₂], [j₂]))
     push!(schedule[m₁], j₂)
     push!(schedule[m₂], j₁)
     return schedule

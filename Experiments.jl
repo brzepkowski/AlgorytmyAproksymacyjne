@@ -24,7 +24,7 @@ function testSet(machines, testCaseGenerator :: Function, farg)
   end
 end
 
-18,6,20
+# 18,6,20
  testSet(10, uniformTestCaseOptimum, 10)
 
  testSet(3, easyTestCase, 10)
