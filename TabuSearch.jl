@@ -1,3 +1,8 @@
+# Copyright (c) 2017 Bartosz Rzepkowski, all rights reserved.
+module TabuSearch
+
+export tabuSearch
+
 function Makespan(scheme)
   makespan = maximum(sum(scheme[i]) for i=1:length(scheme) if !isempty(scheme[i]))
   return makespan
@@ -15,23 +20,6 @@ function FindMinIndex(arr)
     end
     return index
 end # FindMinIndex
-
-# times - czasy wykonania zadań, m - liczba maszyn
-function FindFeasibleSolution(times, m)
-    machines = zeros(m)
-    machinesJobs = Array{Any}(m)
-    for i in 1:m
-        machinesJobs[i] = []
-    end
-    sortedTimes = sort(times, rev=true)
-    FindMinIndex(sortedTimes)
-    for p in sortedTimes
-        index = FindMinIndex(machines)
-        push!(machinesJobs[index], p)
-        machines[index] += p
-    end
-    return machinesJobs
-end # FindFeasibleSolution
 
 function FindMaxMakespanIndex(machinesJobs)
     index = 0
@@ -68,16 +56,16 @@ function FindMinMakespanIndex(machinesJobs)
 end # FindMinMakespanIndex
 
 function SwapJobsAndCountMakespan(machineTasks₁, machineTasks₂, t₁, t₂)
-    println("t₁: ", t₁)
-    println("t₂: ", t₂)
-    println("1) machineTasks₁: ", machineTasks₁)
-    println("1) machineTasks₂: ", machineTasks₂)
+    # println("t₁: ", t₁)
+    # println("t₂: ", t₂)
+    # println("1) machineTasks₁: ", machineTasks₁)
+    # println("1) machineTasks₂: ", machineTasks₂)
     deleteat!(machineTasks₁, findin(machineTasks₁, t₁)[1])
     deleteat!(machineTasks₂, findin(machineTasks₂, t₂)[1])
     push!(machineTasks₁, t₂)
     push!(machineTasks₂, t₁)
-    println("2) machineTasks₁: ", machineTasks₁)
-    println("2) machineTasks₂: ", machineTasks₂)
+    # println("2) machineTasks₁: ", machineTasks₁)
+    # println("2) machineTasks₂: ", machineTasks₂)
     if machineTasks₁ != []
         makespan₁ = sum(machineTasks₁)
     else
@@ -99,14 +87,27 @@ function Termination(x)
     end
 end
 
-function TabuSearch(times, machines, L)
+function FindRandomSolution(times, m)
+    machines = zeros(m)
+    machinesJobs = Array{Any}(m)
+    for i in 1:m
+        machinesJobs[i] = []
+    end
+    for t in times
+        i = rand(1:m)
+        push!(machinesJobs[i], t)
+    end
+    return machinesJobs
+end # FindRandomSolution
+
+function tabuSearch(times, machines, L)
     i = 0
     n = length(times)
     M = zeros(n)
     for j in 1:n
         M[j] = typemin(Int64)
     end
-    W = FindFeasibleSolution(times, machines)
+    W = FindRandomSolution(times, machines)
     D = zeros(machines)
     for j in 1:machines
         if W[j] != []
@@ -120,13 +121,13 @@ function TabuSearch(times, machines, L)
     tabuList = []
     done = false
 
-    println("M: ", M)
-    println("W: ", W)
-    println("D: ", D)
-    println("dᵦ: ", dᵦ)
+    # println("M: ", M)
+    # println("W: ", W)
+    # println("D: ", D)
+    # println("dᵦ: ", dᵦ)
     lastImprovement = 0
     while !done
-        println("W: ", W)
+        # println("W: ", W)
         i += 1
         m = FindMaxMakespanIndex(W)
         D = zeros(machines)
@@ -145,7 +146,7 @@ function TabuSearch(times, machines, L)
             lastImprovement += 1
         end
         if !Termination(lastImprovement)
-            push!(tabuList, W)
+            # push!(tabuList, W)
             if length(tabuList) > L
                 deleteat!(tabuList, 1)
             end
@@ -156,8 +157,8 @@ function TabuSearch(times, machines, L)
                 MJobs = W[m]
                 JJobs = W[j]
                 push!(JJobs, 0)
-                println("MJobs: ", MJobs)
-                println("JJobs: ", JJobs)
+                # println("MJobs: ", MJobs)
+                # println("JJobs: ", JJobs)
                 # sleep(2)
                 if MJobs != []
                     makespanₘ = sum(MJobs)
@@ -171,26 +172,28 @@ function TabuSearch(times, machines, L)
                 end
                 makespan = maximum([makespanₘ, makespanⱼ])
                 for t₁ in MJobs
-                    for t₂ in JJobs
-                        # sleep(0.25)
-                        machineTasks₁ = deepcopy(MJobs)
-                        machineTasks₂ = deepcopy(JJobs)
-                        swapMakespan = SwapJobsAndCountMakespan(machineTasks₁, machineTasks₂, t₁, t₂)
-                        println("swap makespan: ", swapMakespan)
-                        println("makespan: ", makespan)
-                        if swapMakespan < makespan
-                            r = t₁
-                            s = t₂
-                            makespan = swapMakespan
+                    if !in(t₁, tabuList)
+                        for t₂ in JJobs
+                            if !in(t₂, tabuList)
+                                # sleep(0.25)
+                                machineTasks₁ = deepcopy(MJobs)
+                                machineTasks₂ = deepcopy(JJobs)
+                                swapMakespan = SwapJobsAndCountMakespan(machineTasks₁, machineTasks₂, t₁, t₂)
+                                # println("swap makespan: ", swapMakespan)
+                                # println("makespan: ", makespan)
+                                if swapMakespan < makespan
+                                    r = t₁
+                                    s = t₂
+                                    makespan = swapMakespan
+                                end
+                            end
                         end
                     end
                 end
                 pop!(JJobs)
-            else
-                println("! m == j !")
             end
-            println("1) r: ", r)
-            println("1) s: ", s)
+            # println("1) r: ", r)
+            # println("1) s: ", s)
             iᵣ = 0; rRandom = false
             if r == -1
                 indices = collect(1:machines)
@@ -205,10 +208,10 @@ function TabuSearch(times, machines, L)
                     rRandom = true
                 end
             end
-            println("2) r: ", r)
-            println("2) s: ", s)
-            println("m: ", m)
-            println("j: ", j)
+            # println("2) r: ", r)
+            # println("2) s: ", s)
+            # println("m: ", m)
+            # println("j: ", j)
             # Move task r to processor j
             if rRandom
                 if r != -1
@@ -219,16 +222,18 @@ function TabuSearch(times, machines, L)
                 deleteat!(W[m], findin(W[m], r)[1])
                 push!(W[j], r)
             end
+            push!(tabuList, r)
             if s > 0
                 # Move task s to processor m
                 deleteat!(W[j], findin(W[j], s)[1])
                 push!(W[m], s)
+                push!(tabuList, s)
             end
         else
             done = true
         end
     end
-    return Wᵦ
+    return Wᵦ, Makespan(Wᵦ)
 end # TabuSearch
 
-println(TabuSearch([1,3,3,4,5], 3, 5))
+end
