@@ -140,8 +140,8 @@ function InterchangeNeighbourhood(schedule, m)
 end # InterchangeNeighbourhood
 
 function SwapJobs(schedule, m₁, m₂, j₁, j₂)
-    deleteat!(schedule[m₁], findin(schedule[m₁], [j₁]))
-    deleteat!(schedule[m₂], findin(schedule[m₂], [j₂]))
+    deleteat!(schedule[m₁], findin(schedule[m₁], [j₁])[1])
+    deleteat!(schedule[m₂], findin(schedule[m₂], [j₂])[1])
     push!(schedule[m₁], j₂)
     push!(schedule[m₂], j₁)
     return schedule
