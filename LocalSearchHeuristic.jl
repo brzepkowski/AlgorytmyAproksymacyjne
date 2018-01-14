@@ -32,11 +32,7 @@ function FindMaxMakespanIndex(machinesJobs)
     index = 0
     maxMakespan = 0
     for (i, jobs) in enumerate(machinesJobs)
-        if jobs != []
-            makespan = sum(jobs)
-        else
-            makespan = 0
-        end
+        makespan = sum(jobs)
         if makespan > maxMakespan
             maxMakespan = makespan
             index = i
@@ -45,18 +41,22 @@ function FindMaxMakespanIndex(machinesJobs)
     return index
 end # FindMaxMakespanIndex
 
-function FindRandomSolution(times, m)
+# times - czasy wykonania zadań, m - liczba maszyn
+function FindFeasibleSolution(times, m)
     machines = zeros(m)
     machinesJobs = Array{Any}(m)
     for i in 1:m
         machinesJobs[i] = []
     end
-    for t in times
-        i = rand(1:m)
-        push!(machinesJobs[i], t)
+    sortedTimes = sort(times, rev=true)
+    FindMinIndex(sortedTimes)
+    for p in sortedTimes
+        index = FindMinIndex(machines)
+        push!(machinesJobs[index], p)
+        machines[index] += p
     end
     return machinesJobs
-end # FindRandomSolution
+end # FindFeasibleSolution
 
 function ReassignmentNeighbourhood(s, m)
     while true
@@ -77,7 +77,7 @@ function ReassignmentNeighbourhood(s, m)
                 return g
             else
                 (i, j) = pop!(EMax)
-                deleteat!(g[mMax], findin(g[mMax], [j]))
+                deleteat!(g[mMax], findin(g[mMax], [j])[1])
                 push!(g[i], j)
             end
         end
@@ -92,11 +92,7 @@ function InterchangeNeighbourhood(schedule, m)
     while true
         M = []
         for (i, s) in enumerate(schedule)
-            if s != []
-                push!(M, (sum(s), i))
-            else
-                push!(M, (0, i))
-            end
+            push!(M, (sum(s), i))
         end
 
         M₁ = sort(M, rev=true); M₂ = sort(M, rev=false)
@@ -109,12 +105,10 @@ function InterchangeNeighbourhood(schedule, m)
         j = 1
         exchange = false
         while !exchange && k <= length(J₁)
+            j₁ = J₁[k]
+            j₂ = J₂[j]
             g = deepcopy(schedule)
-            if k <= length(J₁) && j <= length(J₂)
-                j₁ = J₁[k]
-                j₂ = J₂[j]
-                g = SwapJobs(g, m₁, m₂, j₁, j₂)
-            end
+            g = SwapJobs(g, m₁, m₂, j₁, j₂)
             if Makespan(g) < Makespan(schedule)
                 exchange = true
             else
@@ -154,10 +148,10 @@ function SwapJobs(schedule, m₁, m₂, j₁, j₂)
 end # SwapJobs
 
 function localSearchHeuristic(times, m)
-    s = FindRandomSolution(times, m)
+    s = FindFeasibleSolution(times, m)
     sˈ = ReassignmentNeighbourhood(s, m)
     sˈˈ = InterchangeNeighbourhood(sˈ, m)
-    return sˈˈ, Makespan(sˈˈ)
+    return sˈˈ, maximum(sum(s''[i]) for i=1:length(s''))
 end # LocalSearchHeuristic
 
 end

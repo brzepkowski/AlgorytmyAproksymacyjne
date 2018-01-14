@@ -12,6 +12,7 @@ export uniformTestCaseOptimum
 export exponentialTestCase
 export cauchyTestCaseLowerBound
 export paretoTestCaseLowerBound
+export cauchyTestCaseOptimum
 
 struct TestCase
   time :: Vector{Int}
@@ -65,6 +66,12 @@ function cauchyTestCaseLowerBound(jobs, machines, maxJobTime)
   return TestCases.TestCase(timeInt, machines, makespan)
 end
 
+function cauchyTestCaseOptimum(jobs, machines, maxJobTime)
+  time = rand(Cauchy(100, 100), jobs)
+  timeInt = map(x -> convert(Int64, abs(round(x))), time)
+  _, makespan = integerProgramming(timeInt, machines)
+  return TestCases.TestCase(timeInt, machines, makespan)
+end
 
 
 end

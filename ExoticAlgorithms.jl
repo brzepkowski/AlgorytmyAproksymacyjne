@@ -50,7 +50,7 @@ function multifit(times, machines, kf)
   cu = []
   push!(cl, calcCl(timesSorted, machines))
   push!(cu, calcCu(timesSorted, machines))
-  k = 50 + kf*10
+  k = convert(Int64, ceil(log2(sum(timesSorted)))) + 50 + kf*10
   assignment = [[]]
   ms = 0
   for i in 2:k
@@ -63,6 +63,20 @@ function multifit(times, machines, kf)
       push!(cl, c)
       push!(cu, cu[i-1])
     end
+  end
+  if length(assignment[1:findfirst(x -> isempty(x), assignment)-1]) > machines
+    newAssignment = assignment[1:machines]
+    rest = assignment[machines+1:findfirst(x -> isempty(x), assignment)-1]
+    costs = [sum(newAssignment[i]) for i in 1:length(newAssignment)]
+    for r in rest
+      for j in r
+        index = indmin(costs)
+        push!(newAssignment[index], j)
+        costs[index] += j
+      end
+    end
+    ms = maximum(costs)
+    return newAssignment, ms
   end
   return assignment[1:findfirst(x -> isempty(x), assignment)-1], ms
 end
